@@ -12,7 +12,7 @@
 ## Installation
 
 ```sh
-pipx install encode-utils-cli
+uv tool install encode-utils-cli
 # or
 pip install encode-utils-cli
 ```

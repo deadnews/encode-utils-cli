@@ -8,7 +8,6 @@ repos:
     rev: v6.0.0
     hooks:
       - id: check-added-large-files
-      - id: check-case-conflict
       - id: check-merge-conflict
       - id: check-toml
       - id: check-yaml
@@ -45,7 +44,7 @@ repos:
       - id: taplo-format
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.8
+    rev: v0.14.9
     hooks:
       - id: ruff-format
       - id: ruff-check
