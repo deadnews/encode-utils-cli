@@ -42,7 +42,7 @@ def vs_screens(
         save_pattern = Path(f"{out_dir}/{vid.stem} %d.png")
 
         clip = open_clip(vid, drop_prop=drop_prop, offset=offset, crop=crop)
-        writer = core.imwri.Write(clip, "png", save_pattern)
+        writer = core.imwri.Write(clip, "png", save_pattern)  # ty: ignore[unresolved-attribute]
 
         for frame in frames.split():
             click.echo(f"Writing: '{save_pattern}' {frame}")
@@ -56,11 +56,11 @@ def open_clip(video: Path, drop_prop: bool, offset: int, crop: int) -> VideoNode
 
     if drop_prop:
         clip = (
-            clip.std.Setframe_prop(prop="_Matrix", delete=True)
+            clip.std.Setframe_prop(prop="_Matrix", delete=True)  # ty: ignore[unresolved-attribute]
             .std.Setframe_prop(prop="_Transfer", delete=True)
             .std.Setframe_prop(prop="_Primaries", delete=True)
         )
-    clip = clip.resize.Spline36(
+    clip = clip.resize.Spline36(  # ty: ignore[unresolved-attribute]
         format=RGB24,
         matrix_in_s="709" if clip.height >= sd_height else "601",
     )

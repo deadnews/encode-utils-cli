@@ -13,7 +13,7 @@ def source(video: Path) -> VideoNode:
         VideoNode: The loaded video source.
     """
     return (
-        core.lsmas.LibavSMASHSource(source=video)
+        core.lsmas.LibavSMASHSource(source=video)  # ty: ignore[unresolved-attribute]
         if video.suffix == ".mp4"
-        else core.lsmas.LWLibavSource(source=video)
+        else core.lsmas.LWLibavSource(source=video)  # ty: ignore[unresolved-attribute]
     )
