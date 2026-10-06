@@ -55,11 +55,7 @@ def open_clip(video: Path, drop_prop: bool, offset: int, crop: int) -> VideoNode
     sd_height = 576
 
     if drop_prop:
-        clip = (
-            clip.std.Setframe_prop(prop="_Matrix", delete=True)  # ty: ignore[unresolved-attribute]
-            .std.Setframe_prop(prop="_Transfer", delete=True)
-            .std.Setframe_prop(prop="_Primaries", delete=True)
-        )
+        clip = clip.std.RemoveFrameProps(["_Matrix", "_Transfer", "_Primaries"])  # ty: ignore[unresolved-attribute]
     clip = clip.resize.Spline36(  # ty: ignore[unresolved-attribute]
         format=RGB24,
         matrix_in_s="709" if clip.height >= sd_height else "601",
