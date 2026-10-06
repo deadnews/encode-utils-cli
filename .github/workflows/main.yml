@@ -11,25 +11,14 @@ permissions:
   contents: read
 
 jobs:
-  lint:
-    name: Lint code
+  prek:
+    name: Prek
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Setup vapoursynth
-        uses: deadnews/action-setup-vs@main
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
-        with:
-          enable-cache: true
-
-      - name: Install project
-        run: uv sync --frozen
-
-      - name: Lint code
-        run: make lint
+      - name: Run prek
+        uses: j178/prek-action@1382ad72dea72f9d53832f2bcb65b3e87a947204 # v3.0.1
 
   test:
     name: Tests
@@ -40,13 +29,10 @@ jobs:
         python-version: ["3.14"]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v6
-
-      - name: Setup vapoursynth
-        uses: deadnews/action-setup-vs@main
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Install uv
-        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
         with:
           enable-cache: true
           python-version: ${{ matrix.python-version }}
@@ -59,34 +45,34 @@ jobs:
 
       - name: Upload coverage to Codecov
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.14'
-        uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2 # v6.0.0
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
 
   pypi-deploy:
     name: Release to PyPI
     if: github.ref_type == 'tag'
-    needs: [lint, test]
+    needs: [prek, test]
     environment: pypi
     permissions:
       id-token: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Install uv
-        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
         with:
           enable-cache: true
 
       - name: Build package
         run: uv build
 
-      - name: Publish package to PyPI
-        uses: pypa/gh-action-pypi-publish@cef221092ed1bacb1cc03d23a2d87d1d172e277b # v1.14.0
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
 
   github-deploy:
     name: Release to GitHub
     if: github.ref_type == 'tag'
-    needs: [lint, test]
+    needs: [prek, test]
     environment: github-releases
     permissions:
       contents: write
@@ -95,31 +81,28 @@ jobs:
       PRERELEASE: ${{ contains(github.ref, 'alpha') || contains(github.ref, 'beta') }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Create GitHub Release
         run: |
-          gh release create ${GITHUB_REF_NAME} \
-            --title ${GITHUB_REF_NAME} \
+          gh release create "${GITHUB_REF_NAME}" \
+            --title "${GITHUB_REF_NAME}" \
             --notes="See [the CHANGELOG](${CHANGELOG}) for more details." \
-            --draft=${PRERELEASE} \
-            --prerelease=${PRERELEASE}
+            --draft="${PRERELEASE}" \
+            --prerelease="${PRERELEASE}"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   docs-build:
     name: Build docs
     if: github.ref_type == 'tag'
-    needs: [lint, test]
+    needs: [prek, test]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-
-      - name: Setup vapoursynth
-        uses: deadnews/action-setup-vs@main
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Install uv
-        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
         with:
           enable-cache: true
 
@@ -127,10 +110,10 @@ jobs:
         run: uv run --frozen mkdocs build
 
       - name: Setup Pages
-        uses: actions/configure-pages@v6
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v5
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: site
 
@@ -148,4 +131,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v5
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
