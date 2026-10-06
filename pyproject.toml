@@ -28,11 +28,8 @@ dev = [
   "ruff>=0.12.1",
   "pytest>=8.4.1",
   "pytest-cov>=6.2.1",
-  "mkdocs>=1.6.1",
   "mkdocs-click>=0.9.0",
-  "mkdocs-gen-files>=0.5.0",
-  "mkdocs-literate-nav>=0.6.2",
-  "mkdocs-material>=9.6.14",
+  "zensical>=0.0.68",
   "mkdocstrings>=0.29.1",
   "mkdocstrings-python>=1.16.12",
 ]
